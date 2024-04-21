@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Alert, Form, Input } from 'antd';
-import axios from "./axios";
+import { Button, Form, Input } from 'antd';
+import axios from "@/axios/axios";
+import Link from "next/link";
 
 const onFinish = (values: any) => {
     axios.post("/users/signup", values)
@@ -57,6 +58,7 @@ const SignupForm: React.FC = () => (
             <Button type="primary" htmlType="submit">
                 注册
             </Button>
+            <Link href={"/users/login"}>&nbsp;登录</Link>
         </Form.Item>
     </Form>
 );

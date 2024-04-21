@@ -17,10 +17,9 @@ import (
 
 func main() {
 
-	server := initWebServer()
 	db := initDB()
-	u := initUser(db)
-	u.RegisterRoutes(server)
+	server := initWebServer()
+	initUser(db, server)
 	server.Run(":8080")
 }
 
@@ -62,10 +61,11 @@ func initDB() *gorm.DB {
 	return db
 }
 
-func initUser(db *gorm.DB) *web.UserHandler {
+func initUser(db *gorm.DB, server *gin.Engine) *web.UserHandler {
 	ud := dao.NewUserDAO(db)
 	repo := repository.NewUsrRepostory(ud)
 	svc := service.NewUserService(repo)
 	U := web.NewUserHandler(svc)
+	U.RegisterRoutes(server)
 	return U
 }

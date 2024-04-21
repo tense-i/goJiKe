@@ -9,6 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	emailRegexPattern = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"
+	// 和上面比起来，用 ` 看起来就比较清爽
+	passwordRegexPattern = `^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$`
+)
+
 type UserHandler struct {
 	svc       *service.UserService
 	emailExp  *regexp.Regexp
@@ -16,16 +22,12 @@ type UserHandler struct {
 }
 
 func NewUserHandler(svc *service.UserService) *UserHandler {
-	const (
-		emailRegexPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
-		// 和上面比起来，用 ` 看起来就比较清爽
-		passwordRegexPattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@\\#$%^&*()_+])[A-Za-z\\d!@\\#$%^&*()_+]{6,}$"
-	)
+
 	//预编译操作
 	emailExp := regexp.MustCompile(emailRegexPattern, 0)
 	passwdExp := regexp.MustCompile(passwordRegexPattern, regexp.None)
 	return &UserHandler{
-		&service.UserService{},
+		svc,
 		emailExp,
 		passwdExp,
 	}
@@ -63,11 +65,13 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 
 	ok, err := u.emailExp.MatchString(req.Email)
 	if err != nil {
+		println("邮箱表达式不对")
 		//正则表达式不对
 		ctx.String(http.StatusInternalServerError, "系统错误")
 		return
 	}
 	if !ok {
+		println("邮箱不对")
 		ctx.String(http.StatusBadRequest, "你的邮箱格式不对")
 		return
 	}
@@ -76,8 +80,10 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 	if err != nil {
 		//正则表达式不对
 		ctx.String(http.StatusInternalServerError, "系统错误")
+		println("正则表达式格式不对")
 	}
 	if !ok {
+		println("密码格式 不对")
 		ctx.String(http.StatusBadRequest, "密码格式不对")
 		return
 	}
@@ -88,7 +94,7 @@ func (u *UserHandler) SignUp(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		ctx.String(http.StatusOK, "系统错误")
+		ctx.String(http.StatusBadRequest, "系统错误")
 		return
 	}
 	//这里是数据库操作
