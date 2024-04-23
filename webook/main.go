@@ -5,10 +5,13 @@ import (
 	"gojike/webook/internal/repository/dao"
 	"gojike/webook/internal/service"
 	"gojike/webook/internal/web"
+	"gojike/webook/internal/web/middleware"
 	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -45,6 +48,12 @@ func initWebServer() *gin.Engine {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	//使用cookie为仓管
+	store := cookie.NewStore([]byte("secret"))
+	server.Use(sessions.Sessions("mysession", store))
+
+	server.Use(middleware.NewLoginMiddleWareBuilder().IgnorePaths("/usrs/signup").IgnorePaths("/user/login").Build())
 	return server
 
 }
