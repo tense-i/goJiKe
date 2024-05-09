@@ -57,5 +57,6 @@ func (svc *UserService) Login(ctx context.Context, email string, passwd string) 
 
 func (svc *UserService) Edit(ctx context.Context, userInfo domain.UserInfo) error {
 
-	return svc.repo.Edit(ctx, userInfo)
+	//return svc.repo.Edit(ctx, userInfo)
+	return nil
 }

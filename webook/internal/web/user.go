@@ -136,23 +136,32 @@ func (u *UserHandler) Login(ctx *gin.Context) {
 	sess := sessions.Default(ctx)
 	//我可以随便设置值了
 	sess.Set("userId", user.Id)
-	sess.Save()
+
+	//Options 实际上控制的是cookie
+	sess.Options(sessions.Options{
+		Secure:   true,
+		HttpOnly: true,
+	})
+	err = sess.Save()
+	if err != nil {
+		return
+	}
 	ctx.String(http.StatusOK, "登录成功")
 }
 
 func (u *UserHandler) Edit(ctx *gin.Context) {
-	type UserInfo struct {
-		NickName string `json:"nickName"`
-		//Email    string `json:"email"`
-		//PhoneNum string `json:"phoneNum"`
-		Birthday string `json:"birthday"`
-		Aboutme  string `json:"aboutme"`
-	}
-	var userinfoReq UserInfo
-	if err := ctx.Bind(&userinfoReq); err != nil {
-		ctx.String(http.StatusOK, "g ")
-		return
-	}
+	//type UserInfo struct {
+	//	NickName string `json:"nickName"`
+	//	//Email    string `json:"email"`
+	//	//PhoneNum string `json:"phoneNum"`
+	//	Birthday string `json:"birthday"`
+	//	Aboutme  string `json:"aboutme"`
+	//}
+	//var userinfoReq UserInfo
+	//if err := ctx.Bind(&userinfoReq); err != nil {
+	//	ctx.String(http.StatusOK, "g ")
+	//	return
+	//}
 
 	// if len(userinfoReq.NickName) < 2 || len(userinfoReq.NickName) > 9 {
 	// 	ctx.String(http.StatusOK, "昵称长度应大于三")
@@ -187,19 +196,19 @@ func (u *UserHandler) Edit(ctx *gin.Context) {
 	// 	ctx.String(http.StatusOK, "个人简介格式错误")
 	// 	return
 	// }
-	if err := u.svc.Edit(ctx, domain.UserInfo{
-		NickName: userinfoReq.NickName,
-		//Email:    userinfoReq.Email,
-		//PhoneNum: userinfoReq.PhoneNum,
-		Birthday: userinfoReq.Birthday,
-		Aboutme:  userinfoReq.Aboutme,
-	}); err != nil {
-		ctx.String(http.StatusOK, "svc 系统错误")
-		println("svc 系统错误")
-		return
-	}
-
-	ctx.String(http.StatusOK, "修改成功")
+	//if err := u.svc.Edit(ctx, domain.UserInfo{
+	//	NickName: userinfoReq.NickName,
+	//	//Email:    userinfoReq.Email,
+	//	//PhoneNum: userinfoReq.PhoneNum,
+	//	Birthday: userinfoReq.Birthday,
+	//	Aboutme:  userinfoReq.Aboutme,
+	//}); err != nil {
+	//	ctx.String(http.StatusOK, "svc 系统错误")
+	//	println("svc 系统错误")
+	//	return
+	//}
+	//
+	//ctx.String(http.StatusOK, "修改成功")
 
 }
 

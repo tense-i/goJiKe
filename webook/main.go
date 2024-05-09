@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/sessions/redis"
 	"gojike/webook/internal/repository"
 	"gojike/webook/internal/repository/dao"
 	"gojike/webook/internal/service"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -50,7 +50,13 @@ func initWebServer() *gin.Engine {
 	}))
 
 	//使用cookie为仓管
-	store := cookie.NewStore([]byte("secret"))
+	//使用基于内存的
+	//store := cookie.NewStore([]byte("yf86g8tyYTYHN7WmddNjVUyiZIL7KINsMyZlapNlo4xCNLglpmV161NwI2c5ce1O"), []byte("YsboDqjnGKDB7sDc2PaApK76YxKEQOEip3JfeGJT23hCLe8I7iEHCiGVf0cG8hfD"))
+
+	store, err := redis.NewStore(16, "tcp", "localhost:6379", "", []byte("yf86g8tyYTYHN7WmddNjVUyiZIL7KINsMyZlapNlo4xCNLglpmV161NwI2c5ce1O"), []byte("YsboDqjnGKDB7sDc2PaApK76YxKEQOEip3JfeGJT23hCLe8I7iEHCiGVf0cG8hfD"))
+	if err != nil {
+		panic(err)
+	}
 	server.Use(sessions.Sessions("mysession", store))
 
 	server.Use(middleware.NewLoginMiddleWareBuilder().IgnorePaths("/usrs/signup").IgnorePaths("/user/login").Build())

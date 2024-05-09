@@ -51,10 +51,11 @@ func (r *UserRepository) FindById(int64) {
 
 func (r *UserRepository) Edit(ctx context.Context, userinfo domain.UserInfo) error {
 
-	return r.dao.InsertUserInfo(ctx, dao.UserInfo{
-		NickName: userinfo.NickName,
-		//PhoneNum: userinfo.PhoneNum,
-		Birthday: userinfo.Birthday,
-		Aboutme:  userinfo.Aboutme,
-	})
+	//return r.dao.InsertUserInfo(ctx, dao.UserInfo{
+	//	NickName: userinfo.NickName,
+	//	//PhoneNum: userinfo.PhoneNum,
+	//	Birthday: userinfo.Birthday,
+	//	Aboutme:  userinfo.Aboutme,
+	//})
+	return nil
 }
